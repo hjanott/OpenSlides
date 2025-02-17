@@ -67,6 +67,11 @@ increase the `--timeout` flag:
 
     $ ./openslides check-server
 
+To be able to use OpenSlides create initial data. This includes the first
+account for the `superadmin`.
+
+    $ ./openslides initial-data
+
 Now open https://localhost:8000, login with superuser credentials (default
 username and password: `superadmin`) and have fun.
 
@@ -108,7 +113,7 @@ To remove also the database (and lose all your data), run:
 
 The `setup` command generates a Docker Compose YAML file (default filename:
 `docker-compose.yml`) with the container configuration for all services. This
-step can be configured with a (second) YAML formated setup configuration file.
+step can be configured with a (second) YAML formatted setup configuration file.
 All options in the [defaults file](https://github.com/OpenSlides/openslides-manage-service/blob/main/pkg/config/default-config.yml) can be used to configure the setup.
 
 E. g. create a file `my-config.yml` with the following content:
@@ -152,7 +157,7 @@ It is therefore recommended to pin the version explicitly in the `my-config.yml`
 
     ---
     defaults:
-      tag: 4.0.0
+      tag: 4.2.0
 
 Note that if changes to the configuration or structure of the docker stack were
 made the appropriate version of the `openslides` tool must also be refetched
@@ -291,7 +296,7 @@ are sufficient for you.
 
 
 
-## Database backup
+## Database dump
 
 To get a dump of your (PostgreSQL) database, run:
 

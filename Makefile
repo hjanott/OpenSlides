@@ -64,6 +64,9 @@ services-to-main-pull:
 staging-update:
 	$(SCRIPT_PATH)/make-update.sh staging $(ARGS)
 
+staging-log:
+	$(SCRIPT_PATH)/make-update.sh staging-log
+
 hotfix-update:
 	$(SCRIPT_PATH)/make-update.sh hotfix $(ARGS)
 

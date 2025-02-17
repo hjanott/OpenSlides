@@ -453,7 +453,7 @@ merge_stable_branch_meta() {
       git -C "$meta_fullpath" checkout "$BRANCH_NAME"
       if [[ -z "$forerunner_path" ]]; then
         merge_stable_branch "$meta_fullpath"
-        git -C "$meta_fullpath" commit \
+        git -C "$meta_fullpath" commit --no-edit --allow-empty \
           --message "Merge $STAGING_BRANCH_NAME into $STABLE_BRANCH_NAME. Update $(date +%Y%m%d)"
         forerunner_path="$meta_fullpath"
       else
@@ -542,6 +542,24 @@ make_stable_update() {
   keep_stable_house
 }
 
+staging_log() {
+  git fetch -q $REMOTE_NAME $STAGING_BRANCH_NAME
+  git log --graph --oneline -U0 --submodule $REMOTE_NAME/$STABLE_BRANCH_NAME..$REMOTE_NAME/$STAGING_BRANCH_NAME | \
+    awk -v version="$STAGING_VERSION" '
+      /^\*.*Staging update [0-9]{8}/ { printf("\n# %s-staging-%s-%s\n", version, $NF, substr($2, 0, 7)) }
+      /^\*/ { printf("  %s\n",$0) }
+      /^  Submodule/ {printf("    %s %s\n", $2, $3)}
+      /^\| Submodule/ {printf("    %s %s\n", $3, $4)}
+      /^    >/ { $1=""; printf("      %s\n", $0 )}
+      /^\|   >/ { $1=""; $2=""; printf("      %s\n", $0 )}
+   '
+}
+
+
+command -v awk > /dev/null || {
+  echo "Error: 'awk' not installed!"
+  exit 1
+}
 
 shortopt='phl'
 longopt='pull,help,local'
@@ -600,6 +618,11 @@ for arg; do
       confirm_version
       BRANCH_NAME=$STABLE_BRANCH_NAME
       make_hotfix_update
+      shift 1
+      ;;
+    staging-log)
+      confirm_version
+      staging_log
       shift 1
       ;;
   esac
